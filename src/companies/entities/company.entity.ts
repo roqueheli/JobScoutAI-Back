@@ -1,15 +1,16 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
+import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { CompanyAdmin } from '../../company-admin/company-admin.entity';
 import { JobPost } from '../../job-posts/entities/job-post.entity';
 
 @Entity('companies')
 export class Company {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn({ type: 'bigint', unsigned: true })
   id: string;
 
   @Column()
   name: string;
 
-  @Column({ type: 'text', nullable: true })
+  @Column('text', { nullable: true })
   description: string;
 
   @Column({ nullable: true })
@@ -41,4 +42,7 @@ export class Company {
 
   @OneToMany(() => JobPost, jobPost => jobPost.company)
   job_posts: JobPost[];
+
+  @OneToMany(() => CompanyAdmin, companyAdmin => companyAdmin.company)
+  companyAdmins: CompanyAdmin[];
 }

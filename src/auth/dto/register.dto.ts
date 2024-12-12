@@ -1,12 +1,10 @@
-import { IsEmail, IsString, MinLength, IsOptional, IsEnum } from 'class-validator';
-import { UserRole } from '../../users/entities/user.entity';
+import { IsEmail, IsEnum, IsOptional, IsString, IsUUID } from 'class-validator';
 
 export class RegisterDto {
   @IsEmail()
   email: string;
 
   @IsString()
-  @MinLength(8)
   password: string;
 
   @IsString()
@@ -15,19 +13,18 @@ export class RegisterDto {
   @IsString()
   last_name: string;
 
-  @IsEnum(UserRole)
-  @IsOptional()
-  role?: UserRole;
+  @IsEnum(['ADMIN', 'COMPANY_ADMIN', 'INTERVIEWER', 'APPLICANT'])
+  role: string;
 
-  @IsString()
   @IsOptional()
+  @IsUUID()
+  companyId?: string;
+
+  @IsOptional()
+  @IsString()
   phone?: string;
 
-  @IsString()
   @IsOptional()
-  linkedin_url?: string;
-
   @IsString()
-  @IsOptional()
-  github_url?: string;
+  profile_picture?: string;
 }

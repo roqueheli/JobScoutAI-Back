@@ -1,6 +1,7 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne, OneToMany } from 'typeorm';
-import { Company } from '../../companies/entities/company.entity';
+import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { Application } from '../../applications/entities/application.entity';
+import { Company } from '../../companies/entities/company.entity';
+import { JobSkill } from '../../job-skills/entities/job-skill.entity';
 
 export enum LocationType {
   REMOTE = 'REMOTE',
@@ -32,8 +33,11 @@ export enum JobStatus {
 
 @Entity('job_posts')
 export class JobPost {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn({ type: 'bigint', unsigned: true })
   id: string;
+
+  @Column({ type: 'bigint', unsigned: true })
+  company_id: string;
 
   @ManyToOne(() => Company, company => company.job_posts)
   company: Company;
@@ -98,4 +102,7 @@ export class JobPost {
 
   @OneToMany(() => Application, application => application.job_post)
   applications: Application[];
+
+  @OneToMany(() => JobSkill, jobSkill => jobSkill.job_post)
+  job_skills: JobSkill[];
 }

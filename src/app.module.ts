@@ -8,6 +8,7 @@ import { JobSkillsModule } from './job-skills/job-skills.module';
 import { StageTransitionsModule } from './stage-transitions/stage-transitions.module';
 import databaseConfig from './config/database.config';
 import jwtConfig from './config/jwt.config';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import jwtConfig from './config/jwt.config';
     InterviewsModule,
     JobSkillsModule,
     StageTransitionsModule,
+    UsersModule,
   ],
 })
 export class AppModule {}

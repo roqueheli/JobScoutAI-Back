@@ -10,17 +10,7 @@ export class AuthController {
 
   @Post('register')
   async register(@Body() registerDto: RegisterDto) {
-    const user = await this.authService.register(registerDto);
-    return {
-      message: 'User registered successfully',
-      user: {
-        id: user.id,
-        email: user.email,
-        first_name: user.first_name,
-        last_name: user.last_name,
-        role: user.role,
-      },
-    };
+    return this.authService.register(registerDto);
   }
 
   @Post('login')
@@ -31,7 +21,7 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @Get('me')
   async getProfile(@Request() req) {
-    const user = await this.authService.findById(req.user.userId);
+    const user = await this.authService.findById(req.user.sub);
     return {
       id: user.id,
       email: user.email,
@@ -46,6 +36,10 @@ export class AuthController {
       is_active: user.is_active,
       created_at: user.created_at,
       updated_at: user.updated_at,
+      adminCompanies: user.companyAdmins?.map(admin => ({
+        id: admin.company.id,
+        name: admin.company.name
+      })) || []
     };
   }
 }

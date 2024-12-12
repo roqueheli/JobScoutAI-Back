@@ -398,3 +398,6 @@ Temporary Items
 dist
 .webpack
 .serverless/**/*.zip
+credentials.json  
+uploads/temp/*  
+!uploads/temp/.gitkeep  
