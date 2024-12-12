@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { createWriteStream, readFileSync } from 'fs';
 import { GoogleAuth } from 'google-auth-library';
 import { google } from 'googleapis';
@@ -35,11 +35,9 @@ export class GoogleDriveService {
     }
 
     async uploadFile(file: Express.Multer.File): Promise<string> {
-        console.log('Uploading file:', {
-            name: file.originalname,
-            size: file.size,
-            mimetype: file.mimetype,
-        });
+        if (!file) {
+            throw new BadRequestException('No file provided');
+        }
 
         if (!file.buffer || file.buffer.length === 0) {
             throw new Error('File is empty');
@@ -76,8 +74,6 @@ export class GoogleDriveService {
                 fields: 'id, name, size, mimeType',
             });
 
-            console.log('Uploaded file details:', uploadedFile.data);
-
             // Retornar URL según el tipo
             if (file.mimetype.startsWith('image/')) {
                 return `https://drive.google.com/thumbnail?id=${response.data.id}&sz=w200-h200`;
@@ -97,25 +93,23 @@ export class GoogleDriveService {
     }
 
     async downloadFile(fileId: string, destinationPath: string): Promise<void> {
-        const drive = google.drive({ version: 'v3', auth: this.auth });
-        const dest = createWriteStream(destinationPath);
+        try {
+            const dest = createWriteStream(destinationPath);
 
-        const response = await drive.files.get({
-            fileId: fileId,
-            alt: 'media',
-        }, { responseType: 'stream' });
+            const response = await this.drive.files.get(
+                { fileId, alt: 'media' },
+                { responseType: 'stream' }
+            );
 
-        return new Promise((resolve, reject) => {
-            response.data
-                .on('end', () => {
-                    console.log('Done downloading file.');
-                    resolve();
-                })
-                .on('error', err => {
-                    console.error('Error downloading file.');
-                    reject(err);
-                })
-                .pipe(dest);
-        });
+            return new Promise((resolve, reject) => {
+                response.data
+                    .on('end', () => resolve())
+                    .on('error', (err) => reject(err))
+                    .pipe(dest);
+            });
+        } catch (error) {
+            console.error('Error downloading file from Google Drive:', error);
+            throw new Error('Failed to download file from Google Drive');
+        }
     }
 }

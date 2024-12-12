@@ -114,7 +114,7 @@ export class UsersService {
         if (!user) {
             throw new NotFoundException('User not found');
         }
-         
+
         try {
             // Si ya existe una foto de perfil, eliminarla de Google Drive  
             if (user.profile_picture) {
@@ -127,8 +127,6 @@ export class UsersService {
             // Subir la nueva foto de perfil a Google Drive  
             const fileUrl = await this.googleDriveService.uploadFile(file);
 
-            console.log('fileUrl', fileUrl);
-            
             // Actualizar el campo `profile_picture` en la base de datos  
             user.profile_picture = fileUrl;
             await this.usersRepository.save(user);
