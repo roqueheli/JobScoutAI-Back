@@ -19,7 +19,10 @@ export class Company {
   @Column({ nullable: true })
   website: string;
 
-  @Column({ nullable: true })
+  @Column({ type: 'json', nullable: true })
+  services: string;
+
+  @Column({ type: 'json', nullable: true })
   industry: string;
 
   @Column({ nullable: true })

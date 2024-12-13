@@ -4,11 +4,11 @@ import { CompaniesService } from './companies.service';
 import { CreateCompanyDto } from './dto/create-company.dto';
 
 @Controller('companies')
-@UseGuards(JwtAuthGuard)
 export class CompaniesController {
   constructor(private readonly companiesService: CompaniesService) { }
 
   @Post()
+  @UseGuards(JwtAuthGuard)
   create(@Request() req, @Body() createCompanyDto: CreateCompanyDto) {
     return this.companiesService.create(createCompanyDto, req.user.userId);
   }
@@ -24,11 +24,13 @@ export class CompaniesController {
   }
 
   @Patch(':id')
+  @UseGuards(JwtAuthGuard)
   update(@Param('id') id: string, @Body() updateCompanyDto: Partial<CreateCompanyDto>) {
     return this.companiesService.update(id, updateCompanyDto);
   }
 
   @Delete(':id')
+  @UseGuards(JwtAuthGuard)
   remove(@Param('id') id: string) {
     return this.companiesService.remove(id);
   }
